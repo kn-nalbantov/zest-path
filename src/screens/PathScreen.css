@@ -1,0 +1,185 @@
+.path-screen {
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(82, 255, 64, 0.12), transparent 40%),
+    radial-gradient(circle at 82% 68%, rgba(28, 176, 246, 0.08), transparent 36%),
+    var(--color-bg);
+}
+
+.skill-path {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+  padding: var(--space-2) 0 var(--space-4);
+  animation: rise-in 0.5s ease 0.05s both;
+}
+
+.skill-node {
+  position: relative;
+  width: min(100%, 280px);
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  column-gap: var(--space-4);
+  min-height: 128px;
+}
+
+.skill-node__rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.skill-node__bubble {
+  position: relative;
+  z-index: 2;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-pill);
+  display: grid;
+  place-items: center;
+  color: white;
+  flex-shrink: 0;
+  transition: transform 0.12s ease;
+}
+
+.skill-node__bubble:disabled {
+  cursor: not-allowed;
+}
+
+.skill-node__bubble:not(:disabled):active {
+  transform: translateY(2px) scale(0.97);
+}
+
+.skill-node__icon {
+  display: grid;
+  place-items: center;
+  z-index: 1;
+}
+
+.skill-node--complete .skill-node__bubble {
+  background: var(--color-primary);
+  box-shadow: 0 4px 0 var(--color-primary-border);
+}
+
+.skill-node--current .skill-node__bubble {
+  background: var(--color-secondary);
+  box-shadow: 0 4px 0 var(--color-secondary-border);
+}
+
+.skill-node--locked .skill-node__bubble {
+  background: var(--color-border);
+  color: var(--color-neutral);
+  box-shadow: 0 4px 0 var(--color-border-deep);
+}
+
+.skill-node__pulse {
+  position: absolute;
+  inset: -8px;
+  border-radius: var(--radius-pill);
+  border: 3px solid rgba(28, 176, 246, 0.45);
+  animation: path-pulse 1.8s ease-out infinite;
+  pointer-events: none;
+}
+
+.skill-path__connector {
+  width: 4px;
+  flex: 1;
+  min-height: 56px;
+  margin-top: 2px;
+  border-radius: var(--radius-pill);
+}
+
+.skill-path__connector.is-complete {
+  background: var(--color-primary);
+}
+
+.skill-path__connector.is-locked {
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--color-border-deep) 0 8px,
+    transparent 8px 14px
+  );
+}
+
+.skill-node__content {
+  padding-top: 8px;
+  min-width: 0;
+}
+
+.skill-node__title {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-text);
+}
+
+.skill-node--locked .skill-node__title {
+  color: var(--color-text-secondary);
+}
+
+.skill-node__progress {
+  margin-top: var(--space-3);
+  max-width: 160px;
+}
+
+.speech-bubble {
+  position: relative;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  margin-bottom: var(--space-3);
+  box-shadow: 0 2px 6px rgba(60, 60, 60, 0.08);
+  animation: rise-in 0.55s ease 0.15s both;
+}
+
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 14px;
+  width: 12px;
+  height: 12px;
+  background: var(--color-surface);
+  border-left: 2px solid var(--color-border);
+  border-bottom: 2px solid var(--color-border);
+  transform: rotate(45deg);
+}
+
+.speech-bubble p {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-text);
+}
+
+.path-screen__cta {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-2);
+  animation: rise-in 0.55s ease 0.2s both;
+}
+
+.btn--continue {
+  animation: pulse-glow 2.4s ease-in-out 0.8s infinite;
+}
+
+@keyframes path-pulse {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.9;
+  }
+  70% {
+    transform: scale(1.12);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.12);
+    opacity: 0;
+  }
+}
