@@ -7,6 +7,27 @@
     var(--color-bg);
 }
 
+.path-status {
+  margin: var(--space-8) 0;
+  text-align: center;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.path-status--error {
+  color: var(--color-error);
+  padding: 0 var(--space-4);
+}
+
+.skill-node__meta {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
 .skill-path {
   list-style: none;
   display: flex;
@@ -118,7 +139,8 @@
   color: var(--color-text);
 }
 
-.skill-node--locked .skill-node__title {
+.skill-node--locked .skill-node__title,
+.skill-node--locked .skill-node__meta {
   color: var(--color-text-secondary);
 }
 

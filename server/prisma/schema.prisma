@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SkillStatus {
+  LOCKED
+  CURRENT
+  COMPLETE
+}
+
+/// All lesson tasks share the same envelope in `payload`:
+/// {
+///   choices: [{ id: string, text: string }],
+///   answer: { mode: "single" | "multiple" | "ordered", correctIds: string[] },
+///   feedback: { correct: string, incorrect: string }
+/// }
+enum TaskType {
+  SINGLE_CHOICE
+  MULTI_CHOICE
+  ORDER_STEPS
+}
+
+model Skill {
+  id          String      @id @default(cuid())
+  slug        String      @unique
+  title       String
+  description String?
+  tip         String?
+  sortOrder   Int
+  status      SkillStatus @default(LOCKED)
+  icon        String      @default("lock")
+  tasks       Task[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Task {
+  id           String   @id @default(cuid())
+  skillId      String
+  skill        Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  sortOrder    Int
+  type         TaskType
+  prompt       String
+  xpReward     Int      @default(10)
+  /// Shared JSON envelope used by the FE lesson template
+  payload      Json
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([skillId, sortOrder])
+  @@index([skillId])
+}
