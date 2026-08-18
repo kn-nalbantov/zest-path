@@ -1,3 +1,18 @@
+.screen-header__copy {
+  min-width: 0;
+}
+
+.screen-header__user {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
 .quest-card {
   margin-bottom: var(--space-5);
   animation: rise-in 0.5s ease 0.05s both;

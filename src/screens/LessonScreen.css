@@ -191,9 +191,126 @@
   padding-top: var(--space-4);
 }
 
+.lesson-actions--stack {
+  display: grid;
+  gap: var(--space-3);
+}
+
 .lesson-actions .btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+.lesson-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  border: 2px solid var(--color-border);
+  border-bottom-width: 3px;
+  background: var(--color-surface);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.lesson-check.is-on {
+  background: var(--color-primary);
+  border-color: var(--color-primary-border);
+}
+
+.recipe-card {
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-bottom-width: 4px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.recipe-card__title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: var(--space-2);
+}
+
+.recipe-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.recipe-card__meta span {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  background: #eef0ee;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+}
+
+.photo-finish {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  flex: 1;
+}
+
+.photo-dropzone {
+  width: 100%;
+  min-height: 220px;
+  border-radius: var(--radius-xl);
+  border: 3px dashed var(--color-border-deep);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(88, 204, 2, 0.12), transparent 50%),
+    var(--color-surface);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+}
+
+.photo-dropzone:active {
+  transform: scale(0.99);
+}
+
+.photo-dropzone__hint {
+  display: grid;
+  gap: 6px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.photo-dropzone__hint small {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.photo-dropzone__preview {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+}
+
+.photo-input {
+  display: none;
+}
+
+.photo-filename {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-top: calc(var(--space-2) * -1);
 }
 
 @keyframes lesson-shake {

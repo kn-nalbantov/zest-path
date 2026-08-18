@@ -17,7 +17,7 @@ function NodeIcon({ status, icon }) {
   return <LockIcon size={26} />
 }
 
-export default function PathScreen({ activeTab, onTabChange, onStartLesson }) {
+export default function PathScreen({ activeTab, onTabChange, onStartLesson, user, onOpenProfile }) {
   const [skills, setSkills] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -48,22 +48,40 @@ export default function PathScreen({ activeTab, onTabChange, onStartLesson }) {
   }, [])
 
   const currentSkill = skills.find((skill) => skill.status === 'current') ?? skills[0]
+  const displayName = user?.isGuest ? 'Guest Chef' : user?.name || 'Chef'
+  const initials = displayName
+    .split(/\s+/)
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
 
   return (
     <PhoneShell>
       <main className="screen path-screen">
         <header className="screen-header">
           <div className="screen-header__identity">
-            <div className="avatar" aria-hidden="true">
-              <span>ZP</span>
-            </div>
+            <button
+              type="button"
+              className="avatar-button"
+              onClick={onOpenProfile}
+              aria-label="Open profile"
+            >
+              {user?.avatarUrl ? (
+                <img className="avatar avatar--image" src={user.avatarUrl} alt="" />
+              ) : (
+                <div className="avatar" aria-hidden="true">
+                  <span>{initials || 'ZP'}</span>
+                </div>
+              )}
+            </button>
             <h1 className="brand">ZestPath</h1>
           </div>
 
           <div className="screen-header__stats">
             <div className="chip chip--xp-outline" title="Experience points">
               <StarIcon size={16} />
-              <span>525 XP</span>
+              <span>{user?.xp ?? 0} XP</span>
             </div>
           </div>
         </header>

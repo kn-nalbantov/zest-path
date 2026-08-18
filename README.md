@@ -27,14 +27,13 @@ npm install
 npm run db:setup
 ```
 
-`db:setup` pushes the schema and seeds 3 skills with 3 tasks each.
+Set Google OAuth (optional but recommended) in `server/.env`:
 
-Optional Docker Postgres instead of a local install:
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- Redirect URI: `http://localhost:4000/api/auth/google/callback`
 
-```bash
-cd server
-docker compose up -d
-```
+Guest mode works without Google and still stores progress in Postgres via cookie sessions.
 
 ### Frontend
 
@@ -49,7 +48,7 @@ npm run dev
 npm run dev:api
 ```
 
-FE defaults to Vite proxy (`/api` → `http://localhost:4000`).
+FE proxies `/api` and `/uploads` to `http://localhost:4000` with cookie sessions (`credentials: 'include'`).
 
 ## Task template
 

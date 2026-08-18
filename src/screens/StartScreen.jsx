@@ -25,27 +25,48 @@ const RECENT_PLATES = [
   },
 ]
 
-export default function StartScreen({ activeTab, onTabChange }) {
+export default function StartScreen({ activeTab, onTabChange, user, onOpenProfile }) {
   const questProgress = 40
+  const displayName = user?.isGuest ? 'Guest Chef' : user?.name || 'Chef'
+  const initials = displayName
+    .split(/\s+/)
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
 
   return (
     <PhoneShell>
       <main className="screen start-screen">
         <header className="screen-header">
           <div className="screen-header__identity">
-            <div className="avatar" aria-hidden="true">
-              <span>ZP</span>
+            <button
+              type="button"
+              className="avatar-button"
+              onClick={onOpenProfile}
+              aria-label="Open profile"
+            >
+              {user?.avatarUrl ? (
+                <img className="avatar avatar--image" src={user.avatarUrl} alt="" />
+              ) : (
+                <div className="avatar" aria-hidden="true">
+                  <span>{initials || 'ZP'}</span>
+                </div>
+              )}
+            </button>
+            <div className="screen-header__copy">
+              <h1 className="brand">ZestPath</h1>
+              <p className="screen-header__user">{displayName}</p>
             </div>
-            <h1 className="brand">ZestPath</h1>
           </div>
 
           <div className="screen-header__stats">
             <div className="chip chip--streak" title="Day streak">
               <FlameIcon size={16} />
-              <span>5</span>
+              <span>{user?.streakDays ?? 0}</span>
             </div>
             <div className="chip chip--xp" title="Experience points">
-              <span>525 XP</span>
+              <span>{user?.xp ?? 0} XP</span>
             </div>
           </div>
         </header>

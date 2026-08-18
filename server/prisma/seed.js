@@ -28,8 +28,8 @@ const SKILLS = [
     description: 'Safe grips, cuts, and kitchen knife basics.',
     tip: 'Master your blade and every recipe gets easier.',
     sortOrder: 1,
-    status: SkillStatus.COMPLETE,
-    icon: 'crown',
+    status: SkillStatus.LOCKED,
+    icon: 'knife',
     tasks: [
       {
         sortOrder: 1,
@@ -99,7 +99,7 @@ const SKILLS = [
     description: 'High heat, quick movement, glossy results.',
     tip: "Ready to turn up the heat? Let's master the sauté",
     sortOrder: 2,
-    status: SkillStatus.CURRENT,
+    status: SkillStatus.LOCKED,
     icon: 'flame',
     tasks: [
       {
@@ -161,6 +161,40 @@ const SKILLS = [
             incorrect: 'Pooled liquid usually means the pan is overcrowded or too cool.',
           },
         }),
+      },
+      {
+        sortOrder: 4,
+        type: TaskType.RECIPE_COMPLETE,
+        prompt: 'Cook this quick sauté recipe, then check off each step.',
+        xpReward: 25,
+        payload: {
+          ...taskPayload({
+            mode: 'recipe',
+            choices: [
+              { id: 'heat', text: 'Preheat a wide skillet over medium-high heat' },
+              { id: 'fat', text: 'Add 1 tbsp olive oil or butter' },
+              { id: 'garlic', text: 'Sauté minced garlic for 30 seconds' },
+              { id: 'greens', text: 'Add spinach or greens in a single layer' },
+              { id: 'toss', text: 'Toss until just wilted, then season' },
+            ],
+            correctIds: ['heat', 'fat', 'garlic', 'greens', 'toss'],
+            feedback: {
+              correct: 'Plate looks ready — great sauté work!',
+              incorrect: 'Check off every recipe step before finishing.',
+            },
+          }),
+          recipe: {
+            title: 'Garlic Butter Greens',
+            time: '8 mins',
+            difficulty: 'Easy',
+            servings: '1 plate',
+          },
+          photo: {
+            prompt: 'Upload a photo of your finished plate to complete the course.',
+            skipLabel: 'Skip for now',
+            xpBonus: 5,
+          },
+        },
       },
     ],
   },

@@ -13,45 +13,111 @@ enum SkillStatus {
   COMPLETE
 }
 
-/// All lesson tasks share the same envelope in `payload`:
+/// Task payload envelope (quiz + recipe):
 /// {
 ///   choices: [{ id: string, text: string }],
-///   answer: { mode: "single" | "multiple" | "ordered", correctIds: string[] },
-///   feedback: { correct: string, incorrect: string }
+///   answer: { mode: "single" | "multiple" | "ordered" | "recipe", correctIds: string[] },
+///   feedback: { correct: string, incorrect: string },
+///   recipe?: { title, time, difficulty, servings? },
+///   photo?: { prompt: string, skipLabel: string, xpBonus?: number }
 /// }
 enum TaskType {
   SINGLE_CHOICE
   MULTI_CHOICE
   ORDER_STEPS
+  RECIPE_COMPLETE
 }
 
 model Skill {
-  id          String      @id @default(cuid())
-  slug        String      @unique
+  id          String              @id @default(cuid())
+  slug        String              @unique
   title       String
   description String?
   tip         String?
   sortOrder   Int
-  status      SkillStatus @default(LOCKED)
-  icon        String      @default("lock")
+  /// Template only — learner status comes from UserSkillProgress
+  status      SkillStatus         @default(LOCKED)
+  icon        String              @default("lock")
   tasks       Task[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  progress    UserSkillProgress[]
+  plates      PlateUpload[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
 }
 
 model Task {
-  id           String   @id @default(cuid())
-  skillId      String
-  skill        Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
-  sortOrder    Int
-  type         TaskType
-  prompt       String
-  xpReward     Int      @default(10)
-  /// Shared JSON envelope used by the FE lesson template
-  payload      Json
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id        String             @id @default(cuid())
+  skillId   String
+  skill     Skill              @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  sortOrder Int
+  type      TaskType
+  prompt    String
+  xpReward  Int                @default(10)
+  payload   Json
+  progress  UserTaskProgress[]
+  plates    PlateUpload[]
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
 
   @@unique([skillId, sortOrder])
   @@index([skillId])
+}
+
+model User {
+  id            String              @id @default(cuid())
+  email         String?             @unique
+  name          String?
+  avatarUrl     String?
+  googleId      String?             @unique
+  isGuest       Boolean             @default(false)
+  xp            Int                 @default(0)
+  streakDays    Int                 @default(0)
+  skillProgress UserSkillProgress[]
+  taskProgress  UserTaskProgress[]
+  plates        PlateUpload[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+}
+
+model UserSkillProgress {
+  id        String      @id @default(cuid())
+  userId    String
+  skillId   String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill     Skill       @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  status    SkillStatus @default(LOCKED)
+  progress  Int         @default(0)
+  updatedAt DateTime    @updatedAt
+  createdAt DateTime    @default(now())
+
+  @@unique([userId, skillId])
+  @@index([userId])
+}
+
+model UserTaskProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  taskId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  completedAt DateTime @default(now())
+
+  @@unique([userId, taskId])
+  @@index([userId])
+}
+
+model PlateUpload {
+  id         String   @id @default(cuid())
+  userId     String
+  skillId    String?
+  taskId     String?
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill      Skill?   @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  task       Task?    @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  storageKey String?
+  url        String?
+  skipped    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
 }
