@@ -41,6 +41,7 @@ model Skill {
   tasks       Task[]
   progress    UserSkillProgress[]
   plates      PlateUpload[]
+  badge       Badge?
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
 }
@@ -75,6 +76,7 @@ model User {
   skillProgress UserSkillProgress[]
   taskProgress  UserTaskProgress[]
   plates        PlateUpload[]
+  badges        UserBadge[]
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
 }
@@ -120,4 +122,30 @@ model PlateUpload {
   createdAt  DateTime @default(now())
 
   @@index([userId])
+}
+
+/// One badge definition per learning path (skill).
+model Badge {
+  id          String      @id @default(cuid())
+  skillId     String      @unique
+  skill       Skill       @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  slug        String      @unique
+  title       String
+  description String
+  icon        String      @default("crown")
+  awards      UserBadge[]
+  createdAt   DateTime    @default(now())
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  awardedAt DateTime @default(now())
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+  @@index([awardedAt])
 }

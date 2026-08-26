@@ -30,6 +30,12 @@ const SKILLS = [
     sortOrder: 1,
     status: SkillStatus.LOCKED,
     icon: 'knife',
+    badge: {
+      slug: 'blade-master',
+      title: 'Blade Master',
+      description: 'Completed the Knife Skills path.',
+      icon: 'crown',
+    },
     tasks: [
       {
         sortOrder: 1,
@@ -101,6 +107,12 @@ const SKILLS = [
     sortOrder: 2,
     status: SkillStatus.LOCKED,
     icon: 'flame',
+    badge: {
+      slug: 'saute-star',
+      title: 'Sauté Star',
+      description: 'Completed the Sautéing Basics path.',
+      icon: 'flame',
+    },
     tasks: [
       {
         sortOrder: 1,
@@ -206,6 +218,12 @@ const SKILLS = [
     sortOrder: 3,
     status: SkillStatus.LOCKED,
     icon: 'lock',
+    badge: {
+      slug: 'simmer-sage',
+      title: 'Simmer Sage',
+      description: 'Completed The Art of Simmering path.',
+      icon: 'pot',
+    },
     tasks: [
       {
         sortOrder: 1,
@@ -272,12 +290,14 @@ const SKILLS = [
 ]
 
 async function main() {
+  await prisma.userBadge.deleteMany()
+  await prisma.badge.deleteMany()
   await prisma.task.deleteMany()
   await prisma.skill.deleteMany()
 
   for (const skill of SKILLS) {
-    const { tasks, ...skillData } = skill
-    await prisma.skill.create({
+    const { tasks, badge, ...skillData } = skill
+    const created = await prisma.skill.create({
       data: {
         ...skillData,
         tasks: {
@@ -285,16 +305,27 @@ async function main() {
         },
       },
     })
+
+    if (badge) {
+      await prisma.badge.create({
+        data: {
+          skillId: created.id,
+          ...badge,
+        },
+      })
+    }
   }
 
   const counts = await prisma.skill.findMany({
-    include: { _count: { select: { tasks: true } } },
+    include: { _count: { select: { tasks: true } }, badge: true },
     orderBy: { sortOrder: 'asc' },
   })
 
   console.log('Seeded skills:')
   for (const skill of counts) {
-    console.log(`- ${skill.title}: ${skill._count.tasks} tasks (${skill.status})`)
+    console.log(
+      `- ${skill.title}: ${skill._count.tasks} tasks (${skill.status}) badge=${skill.badge?.title ?? 'none'}`,
+    )
   }
 }
 

@@ -126,6 +126,23 @@ export async function mergeGuestIntoUser(guestId, targetUserId, client = prisma)
     })
   }
 
+  const guestBadges = await client.userBadge.findMany({
+    where: { userId: guestId },
+  })
+  for (const row of guestBadges) {
+    await client.userBadge.upsert({
+      where: {
+        userId_badgeId: { userId: targetUserId, badgeId: row.badgeId },
+      },
+      create: {
+        userId: targetUserId,
+        badgeId: row.badgeId,
+        awardedAt: row.awardedAt,
+      },
+      update: {},
+    })
+  }
+
   await client.user.update({
     where: { id: targetUserId },
     data: {
@@ -135,6 +152,26 @@ export async function mergeGuestIntoUser(guestId, targetUserId, client = prisma)
   })
 
   await client.user.delete({ where: { id: guestId } })
+}
+
+export async function awardBadgeForSkill(userId, skillId, client = prisma) {
+  const badge = await client.badge.findUnique({ where: { skillId } })
+  if (!badge) return null
+
+  const existing = await client.userBadge.findUnique({
+    where: {
+      userId_badgeId: { userId, badgeId: badge.id },
+    },
+  })
+  if (existing) return existing
+
+  return client.userBadge.create({
+    data: {
+      userId,
+      badgeId: badge.id,
+    },
+    include: { badge: true },
+  })
 }
 
 export async function recomputeSkillProgress(userId, skillId, client = prisma) {
@@ -161,6 +198,8 @@ export async function recomputeSkillProgress(userId, skillId, client = prisma) {
     where: { userId_skillId: { userId, skillId } },
   })
 
+  const wasComplete = current?.status === SkillStatus.COMPLETE
+
   let status = current?.status ?? SkillStatus.LOCKED
   if (isComplete) {
     status = SkillStatus.COMPLETE
@@ -184,11 +223,15 @@ export async function recomputeSkillProgress(userId, skillId, client = prisma) {
     },
   })
 
+  let awardedBadge = null
   if (isComplete) {
     await unlockNextSkill(userId, skill.sortOrder, client)
+    if (!wasComplete) {
+      awardedBadge = await awardBadgeForSkill(userId, skillId, client)
+    }
   }
 
-  return updated
+  return { progress: updated, awardedBadge }
 }
 
 async function unlockNextSkill(userId, completedSortOrder, client) {

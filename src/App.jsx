@@ -4,6 +4,7 @@ import StartScreen from './screens/StartScreen'
 import PathScreen from './screens/PathScreen'
 import LessonScreen from './screens/LessonScreen'
 import ProfileScreen from './screens/ProfileScreen'
+import SocialScreen from './screens/SocialScreen'
 import {
   fetchAuthStatus,
   fetchMe,
@@ -13,7 +14,7 @@ import {
 import './styles/shared.css'
 import './App.css'
 
-const PLACEHOLDER_TABS = new Set(['ai', 'social'])
+const PLACEHOLDER_TABS = new Set(['ai'])
 
 export default function App() {
   const [bootstrapping, setBootstrapping] = useState(true)
@@ -168,6 +169,13 @@ export default function App() {
           activeTab={tab}
           onTabChange={handleTabChange}
           onStartLesson={setLessonSlug}
+          onOpenProfile={openProfile}
+          user={user}
+        />
+      ) : tab === 'social' ? (
+        <SocialScreen
+          activeTab={tab}
+          onTabChange={handleTabChange}
           onOpenProfile={openProfile}
           user={user}
         />

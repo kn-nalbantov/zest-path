@@ -187,6 +187,7 @@ export function createSkillsRouter() {
       const isCorrect = evaluateAnswer(payload, selectedIds)
 
       let xpAwarded = 0
+      let awardedBadge = null
       if (isCorrect) {
         const existing = await prisma.userTaskProgress.findUnique({
           where: {
@@ -209,7 +210,19 @@ export function createSkillsRouter() {
           req.user.xp += xpAwarded
         }
 
-        await recomputeSkillProgress(req.user.id, skill.id)
+        const progressResult = await recomputeSkillProgress(req.user.id, skill.id)
+        if (progressResult?.awardedBadge?.badge) {
+          const b = progressResult.awardedBadge.badge
+          awardedBadge = {
+            id: progressResult.awardedBadge.id,
+            awardedAt: progressResult.awardedBadge.awardedAt,
+            title: b.title,
+            description: b.description,
+            slug: b.slug,
+            icon: b.icon,
+            skillTitle: skill.title,
+          }
+        }
       }
 
       res.json({
@@ -218,6 +231,7 @@ export function createSkillsRouter() {
         feedback: isCorrect ? payload.feedback.correct : payload.feedback.incorrect,
         correctIds: isCorrect ? undefined : payload?.answer?.correctIds,
         userXp: req.user.xp,
+        awardedBadge,
       })
     } catch (error) {
       console.error(error)

@@ -7,6 +7,7 @@ import connectPgSimple from 'connect-pg-simple'
 import pg from 'pg'
 import { configurePassport, createAuthRouter } from './auth.js'
 import { createSkillsRouter, uploadsDir } from './skills.js'
+import { createSocialRouter } from './social.js'
 
 const app = express()
 const PORT = Number(process.env.PORT) || 4000
@@ -58,6 +59,7 @@ app.get('/api/health', (_req, res) => {
 
 app.use('/api/auth', createAuthRouter())
 app.use('/api/skills', createSkillsRouter())
+app.use('/api/social', createSocialRouter())
 
 app.listen(PORT, () => {
   console.log(`ZestPath API listening on http://localhost:${PORT}`)

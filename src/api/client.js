@@ -67,3 +67,7 @@ export function submitPlate(slug, { file, skipped = false } = {}) {
     body,
   })
 }
+
+export function fetchSocialFeed() {
+  return request('/api/social/feed')
+}
