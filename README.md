@@ -63,3 +63,10 @@ Every task uses the same JSON payload shape:
 ```
 
 `LessonScreen` reads that envelope from the API and renders one of three interactions without per-task custom UI.
+
+## AI Chef
+
+- Pantry mock: `InventoryItem` rows per user (stand-in for Grocy).
+- Prompt: [`server/prompts/ai-chef.md`](server/prompts/ai-chef.md) injected on every Gemini call.
+- Key: `GEMINI_API_KEY` in `server/.env` only (never `VITE_*`).
+- `POST /api/ai/chat` loads inventory from DB, sends it with the system prompt, returns JSON `{ assistantMessage, recipe, shoppingSuggestions }`.

@@ -77,6 +77,7 @@ model User {
   taskProgress  UserTaskProgress[]
   plates        PlateUpload[]
   badges        UserBadge[]
+  inventory     InventoryItem[]
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
 }
@@ -148,4 +149,19 @@ model UserBadge {
   @@unique([userId, badgeId])
   @@index([userId])
   @@index([awardedAt])
+}
+
+/// Mock pantry inventory (stand-in for an external API like Grocy).
+model InventoryItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  quantity  Float?
+  unit      String?
+  category  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }

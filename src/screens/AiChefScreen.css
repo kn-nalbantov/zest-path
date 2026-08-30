@@ -1,0 +1,228 @@
+.ai-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-bottom: 96px;
+}
+
+.inventory-panel {
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-bottom-width: 4px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  animation: rise-in 0.4s ease both;
+}
+
+.inventory-panel__toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.inventory-panel__toggle small {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.inventory-panel__chevron {
+  color: var(--color-secondary);
+  font-size: 18px;
+}
+
+.inventory-panel__body {
+  border-top: 2px solid var(--color-border);
+  padding: 12px 16px 16px;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.inventory-list {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.inventory-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.inventory-list__meta {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  font-size: 12px;
+  text-align: right;
+}
+
+.inventory-empty {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.inventory-cta {
+  height: 42px;
+  font-size: 13px;
+}
+
+.ai-thread {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+  min-height: 220px;
+}
+
+.ai-bubble {
+  max-width: 88%;
+  padding: 12px 14px;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.ai-bubble--assistant {
+  align-self: flex-start;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  display: flex;
+  gap: 10px;
+}
+
+.ai-bubble__bot {
+  color: var(--color-secondary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ai-bubble--user {
+  align-self: flex-end;
+  background: var(--color-primary);
+  color: white;
+  border-bottom: 3px solid var(--color-primary-border);
+}
+
+.ai-typing {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+.ai-error {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-error);
+}
+
+.shopping-card,
+.recipe-card-ai {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.shopping-card h2,
+.recipe-card-ai h2,
+.recipe-card-ai h3 {
+  font-weight: 800;
+}
+
+.shopping-card ul,
+.recipe-card-ai ul,
+.recipe-card-ai ol {
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.recipe-card-ai__eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+}
+
+.recipe-card-ai__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.recipe-card-ai__meta span {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  background: #eef0ee;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+}
+
+.ai-composer {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 72px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  padding: 8px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-bottom-width: 4px;
+  border-radius: var(--radius-lg);
+  z-index: 5;
+}
+
+.ai-composer input {
+  border: none;
+  outline: none;
+  font: inherit;
+  font-weight: 600;
+  padding: 8px 10px;
+  background: transparent;
+  color: var(--color-text);
+}
+
+.ai-composer__send {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: var(--color-secondary);
+  color: white;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom: 3px solid var(--color-secondary-border);
+}
+
+.ai-composer__send:disabled {
+  opacity: 0.5;
+}
+
+.ai-composer__send:not(:disabled):active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+}

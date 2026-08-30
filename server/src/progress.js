@@ -15,6 +15,30 @@ export function mapUser(user) {
   }
 }
 
+const DEFAULT_INVENTORY = [
+  { name: 'Spinach', quantity: 1, unit: 'bag', category: 'Produce' },
+  { name: 'Eggs', quantity: 6, unit: 'pcs', category: 'Dairy & eggs' },
+  { name: 'Feta cheese', quantity: 200, unit: 'g', category: 'Dairy & eggs' },
+  { name: 'Olive oil', quantity: 1, unit: 'bottle', category: 'Pantry' },
+  { name: 'Garlic', quantity: 3, unit: 'cloves', category: 'Produce' },
+  { name: 'Salt', quantity: 1, unit: 'jar', category: 'Pantry' },
+  { name: 'Black pepper', quantity: 1, unit: 'jar', category: 'Pantry' },
+  { name: 'Butter', quantity: 100, unit: 'g', category: 'Dairy & eggs' },
+]
+
+/** Mock pantry for a user (stand-in for Grocy sync). */
+export async function seedInventoryForUser(userId, client = prisma) {
+  const existing = await client.inventoryItem.count({ where: { userId } })
+  if (existing > 0) return
+
+  await client.inventoryItem.createMany({
+    data: DEFAULT_INVENTORY.map((item) => ({
+      userId,
+      ...item,
+    })),
+  })
+}
+
 /** Create default path progress: first skill CURRENT, rest LOCKED. */
 export async function initProgressForUser(userId, client = prisma) {
   const skills = await client.skill.findMany({
@@ -33,6 +57,8 @@ export async function initProgressForUser(userId, client = prisma) {
     })),
     skipDuplicates: true,
   })
+
+  await seedInventoryForUser(userId, client)
 }
 
 export async function createGuestUser(client = prisma) {
@@ -141,6 +167,28 @@ export async function mergeGuestIntoUser(guestId, targetUserId, client = prisma)
       },
       update: {},
     })
+  }
+
+  const targetInvCount = await client.inventoryItem.count({
+    where: { userId: targetUserId },
+  })
+  if (targetInvCount === 0) {
+    const guestInv = await client.inventoryItem.findMany({
+      where: { userId: guestId },
+    })
+    if (guestInv.length > 0) {
+      await client.inventoryItem.createMany({
+        data: guestInv.map(({ name, quantity, unit, category }) => ({
+          userId: targetUserId,
+          name,
+          quantity,
+          unit,
+          category,
+        })),
+      })
+    } else {
+      await seedInventoryForUser(targetUserId, client)
+    }
   }
 
   await client.user.update({

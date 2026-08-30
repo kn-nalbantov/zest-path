@@ -8,6 +8,8 @@ import pg from 'pg'
 import { configurePassport, createAuthRouter } from './auth.js'
 import { createSkillsRouter, uploadsDir } from './skills.js'
 import { createSocialRouter } from './social.js'
+import { createInventoryRouter } from './inventory.js'
+import { createAiRouter } from './ai.js'
 
 const app = express()
 const PORT = Number(process.env.PORT) || 4000
@@ -60,6 +62,8 @@ app.get('/api/health', (_req, res) => {
 app.use('/api/auth', createAuthRouter())
 app.use('/api/skills', createSkillsRouter())
 app.use('/api/social', createSocialRouter())
+app.use('/api/inventory', createInventoryRouter())
+app.use('/api/ai', createAiRouter())
 
 app.listen(PORT, () => {
   console.log(`ZestPath API listening on http://localhost:${PORT}`)

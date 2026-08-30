@@ -71,3 +71,14 @@ export function submitPlate(slug, { file, skipped = false } = {}) {
 export function fetchSocialFeed() {
   return request('/api/social/feed')
 }
+
+export function fetchInventory() {
+  return request('/api/inventory')
+}
+
+export function sendAiChat(messages) {
+  return request('/api/ai/chat', {
+    method: 'POST',
+    body: JSON.stringify({ messages }),
+  })
+}
