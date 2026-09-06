@@ -1,8 +1,9 @@
-.ai-screen {
+.screen.ai-screen {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding-bottom: 96px;
+  /* Nav (~64px) + Ask the Chef bar (~72px) + gap so the last reply is not covered */
+  padding-bottom: 176px;
 }
 
 .inventory-panel {
@@ -86,7 +87,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding-bottom: var(--space-2);
+  padding-bottom: var(--space-4);
   min-height: 220px;
 }
 
