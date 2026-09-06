@@ -95,9 +95,13 @@ export default function StartScreen({ activeTab, onTabChange, user, onOpenProfil
           </div>
         </section>
 
-        <button type="button" className="btn btn--primary btn--hero">
+        <button
+          type="button"
+          className="btn btn--primary btn--hero"
+          onClick={() => onTabChange('ai')}
+        >
           <BoltIcon />
-          Quick AI Recipe
+          Quick Recipe
         </button>
 
         <section className="section" aria-labelledby="recent-plates-title">

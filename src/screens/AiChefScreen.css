@@ -154,12 +154,31 @@
   font-weight: 600;
 }
 
+.card.recipe-card-ai--backup {
+  border-color: #f0d060;
+}
+
 .recipe-card-ai__eyebrow {
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--color-secondary);
+}
+
+.recipe-card-ai--backup .recipe-card-ai__eyebrow {
+  color: #b88600;
+}
+
+.recipe-card-ai__notice {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: #fff6cc;
+  color: #7a5b00;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .recipe-card-ai__meta {

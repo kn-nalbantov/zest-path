@@ -15,7 +15,11 @@ async function request(path, options = {}) {
 
   const data = await response.json().catch(() => ({}))
   if (!response.ok) {
-    const error = new Error(data.error || `Request failed (${response.status})`)
+    const fallback =
+      response.status === 502
+        ? 'The API dropped the connection. Try again in a moment.'
+        : `Request failed (${response.status})`
+    const error = new Error(data.error || fallback)
     error.status = response.status
     error.data = data
     throw error
@@ -76,9 +80,17 @@ export function fetchInventory() {
   return request('/api/inventory')
 }
 
-export function sendAiChat(messages) {
-  return request('/api/ai/chat', {
+export async function sendAiChat(messages) {
+  const options = {
     method: 'POST',
     body: JSON.stringify({ messages }),
-  })
+  }
+  try {
+    return await request('/api/ai/chat', options)
+  } catch (error) {
+    if (error.status === 502) {
+      return request('/api/ai/chat', options)
+    }
+    throw error
+  }
 }

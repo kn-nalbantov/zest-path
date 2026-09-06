@@ -3,10 +3,19 @@ import PhoneShell from '../components/PhoneShell'
 import BottomNav from '../components/BottomNav'
 import { ChefBotIcon, StarIcon } from '../components/Icons'
 import { fetchInventory, sendAiChat } from '../api/client'
+import {
+  isConnectionError,
+  readCachedRecipe,
+  validateRecipe,
+  writeCachedRecipe,
+} from '../ai/recipeCache'
 import './AiChefScreen.css'
 
 const STARTER =
   "Hey Chef! What's in your fridge today? I can already see your pantry — ask me to cook something from it."
+
+const BACKUP_ASSISTANT =
+  "I couldn't reach the live chef just now, so here's a backup recipe from a saved card."
 
 export default function AiChefScreen({
   activeTab,
@@ -24,6 +33,7 @@ export default function AiChefScreen({
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [recipe, setRecipe] = useState(null)
+  const [recipeIsBackup, setRecipeIsBackup] = useState(false)
   const [shopping, setShopping] = useState(null)
   const listRef = useRef(null)
 
@@ -60,6 +70,10 @@ export default function AiChefScreen({
     event?.preventDefault?.()
     const text = draft.trim()
     if (!text || busy) return
+    if (text.length > 500) {
+      setError('Keep your ask under 500 characters.')
+      return
+    }
 
     const nextMessages = [
       ...messages,
@@ -69,6 +83,7 @@ export default function AiChefScreen({
     setDraft('')
     setBusy(true)
     setError('')
+    setRecipeIsBackup(false)
 
     try {
       const payload = await sendAiChat(
@@ -76,6 +91,8 @@ export default function AiChefScreen({
           .filter((m) => m.role === 'user' || m.role === 'assistant')
           .map(({ role, content }) => ({ role, content })),
       )
+
+      const liveRecipe = writeCachedRecipe(payload.recipe) ?? validateRecipe(payload.recipe)
 
       setMessages((current) => [
         ...current,
@@ -85,10 +102,27 @@ export default function AiChefScreen({
           content: payload.assistantMessage,
         },
       ])
-      setRecipe(payload.recipe ?? null)
+      setRecipe(liveRecipe)
+      setRecipeIsBackup(false)
       setShopping(payload.shoppingSuggestions ?? null)
     } catch (err) {
-      setError(err.message || 'AI chef is unavailable')
+      const backup = isConnectionError(err) ? readCachedRecipe() : null
+      if (backup) {
+        setMessages((current) => [
+          ...current,
+          {
+            id: `a-${Date.now()}`,
+            role: 'assistant',
+            content: BACKUP_ASSISTANT,
+          },
+        ])
+        setRecipe(backup)
+        setRecipeIsBackup(true)
+        setShopping(null)
+        setError('')
+      } else {
+        setError(err.message || 'AI chef is unavailable')
+      }
     } finally {
       setBusy(false)
     }
@@ -200,8 +234,17 @@ export default function AiChefScreen({
           )}
 
           {recipe && (
-            <article className="recipe-card-ai card">
-              <p className="recipe-card-ai__eyebrow">Quick recipe card</p>
+            <article
+              className={`recipe-card-ai card${recipeIsBackup ? ' recipe-card-ai--backup' : ''}`}
+            >
+              <p className="recipe-card-ai__eyebrow">
+                {recipeIsBackup ? 'Backup recipe card' : 'Quick recipe card'}
+              </p>
+              {recipeIsBackup && (
+                <p className="recipe-card-ai__notice" role="status">
+                  This is a backup recipe. The AI chef is offline, so we are showing a saved card.
+                </p>
+              )}
               <h2>{recipe.title}</h2>
               <div className="recipe-card-ai__meta">
                 <span>{recipe.time}</span>
