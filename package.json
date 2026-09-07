@@ -10,6 +10,7 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
+    "compose": "docker compose up --build",
     "db:setup": "npm --prefix server run db:setup",
     "db:seed": "npm --prefix server run db:seed"
   },

@@ -14,10 +14,13 @@ import { createAiRouter } from './ai.js'
 const app = express()
 const PORT = Number(process.env.PORT) || 4000
 const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173'
+const useSsl = /sslmode=require/i.test(process.env.DATABASE_URL || '')
+const cookieSecure = process.env.COOKIE_SECURE === 'true'
 
 const PgSession = connectPgSimple(session)
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
+  ssl: useSsl ? { rejectUnauthorized: false } : undefined,
 })
 
 app.set('trust proxy', 1)
@@ -45,7 +48,7 @@ app.use(
     cookie: {
       httpOnly: true,
       sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      secure: cookieSecure,
       maxAge: 1000 * 60 * 60 * 24 * 60, // 60 days
     },
   }),

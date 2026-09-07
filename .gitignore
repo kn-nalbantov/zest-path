@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 server/.env
+.env
+.azure-demo.env
 server/node_modules
 server/uploads
 

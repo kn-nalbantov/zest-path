@@ -50,6 +50,18 @@ npm run dev:api
 
 FE proxies `/api` and `/uploads` to `http://localhost:4000` with cookie sessions (`credentials: 'include'`).
 
+## Docker demo
+
+Three containers: nginx frontend, Express API, PostgreSQL. Only port **8080** (local) or **80** (Azure VM) is published.
+
+```bash
+cp .env.example .env
+# set GEMINI_API_KEY and CLIENT_URL
+docker compose up --build
+```
+
+Open `http://localhost:8080`. On an Azure VM, set `FE_PORT=80` and `CLIENT_URL=http://<public-ip>` in `.env`, then `docker compose up -d --build`. Do not expose 5432 or 4000.
+
 ## Task template
 
 Every task uses the same JSON payload shape:
