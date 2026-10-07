@@ -146,7 +146,6 @@ ${inventoryBlock}
         model: process.env.GEMINI_MODEL || 'gemini-3.6-flash',
         systemInstruction: systemPrompt,
         generationConfig: {
-          temperature: 0.7,
           responseMimeType: 'application/json',
         },
       })
