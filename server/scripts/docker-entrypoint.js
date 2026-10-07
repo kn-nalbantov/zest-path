@@ -17,6 +17,16 @@ function run(command, args) {
 }
 
 run('npx', ['prisma', 'generate'])
-run('npx', ['prisma', 'db', 'push', '--skip-generate'])
+
+const push = spawnSync('npx', ['prisma', 'db', 'push', '--skip-generate'], {
+  cwd: serverRoot,
+  stdio: 'inherit',
+  env: process.env,
+  shell: process.platform === 'win32',
+})
+if (push.status !== 0) {
+  console.warn('prisma db push did not apply; starting API with the existing database')
+}
+
 run(process.execPath, [path.join(serverRoot, 'scripts', 'ensure-seed.js')])
 run(process.execPath, [path.join(serverRoot, 'src', 'index.js')])
